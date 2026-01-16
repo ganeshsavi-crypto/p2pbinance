@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHREEMATKABOSS - Matka Market Daily Free Ank</title>
+    <title>SHREEMATKABOSS - Daily Matka Numbers</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -19,14 +19,11 @@
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
         
@@ -45,10 +42,30 @@
             margin-bottom: 10px;
         }
         
+        .date-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
         .date {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: #4ecdc4;
-            margin-bottom: 5px;
+            padding: 8px 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50px;
+            border: 1px solid #2a4a66;
+        }
+        
+        .date-input {
+            background-color: #1a2d3d;
+            color: #4ecdc4;
+            border: 1px solid #2a4a66;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 1.1rem;
         }
         
         .subtitle {
@@ -57,9 +74,56 @@
             margin-top: 10px;
         }
         
+        .admin-controls {
+            background-color: rgba(26, 45, 61, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px dashed #ff9a3c;
+            display: none;
+        }
+        
+        .admin-controls.active {
+            display: block;
+        }
+        
+        .admin-title {
+            color: #ff9a3c;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-instructions {
+            color: #8a9ba8;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .update-btn {
+            background: linear-gradient(to right, #ff9a3c, #ffcc00);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .update-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 154, 60, 0.4);
+        }
+        
         .markets-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -117,14 +181,14 @@
         
         .number {
             background-color: #2a4a66;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
@@ -161,6 +225,24 @@
             box-shadow: 0 8px 20px rgba(255, 154, 60, 0.6);
         }
         
+        .admin-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff9a3c;
+            color: #000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+        
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -168,15 +250,6 @@
             border-top: 1px solid #2a4a66;
             color: #8a9ba8;
             font-size: 0.9rem;
-        }
-        
-        .footer a {
-            color: #4ecdc4;
-            text-decoration: none;
-        }
-        
-        .footer a:hover {
-            text-decoration: underline;
         }
         
         @media (max-width: 768px) {
@@ -191,6 +264,11 @@
             .market-details {
                 flex-direction: column;
                 gap: 15px;
+            }
+            
+            .date-section {
+                flex-direction: column;
+                gap: 10px;
             }
         }
         
@@ -211,6 +289,15 @@
                 padding: 12px 30px;
                 font-size: 1.1rem;
             }
+            
+            .market-card {
+                padding: 15px;
+            }
+            
+            .number {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 </head>
@@ -218,199 +305,168 @@
     <div class="container">
         <header class="header">
             <h1 class="title">WELCOME TO SHREEMATKABOSS</h1>
-            <div class="date">DATE - 16/01/2026</div>
+            <div class="date-section">
+                <div class="date" id="currentDate">DATE - 16/01/2026</div>
+                <input type="date" class="date-input" id="datePicker">
+            </div>
             <div class="subtitle">ALL MATKA MARKET DAILY FREE ANK</div>
         </header>
         
-        <div class="markets-container">
-            <!-- SRIDEVI Card -->
-            <div class="market-card">
-                <h2 class="market-name">SRIDEVI</h2>
-                <div class="market-details">
-                    <div class="open-section">
-                        <div class="section-title">
-                            <i class="fas fa-lock-open"></i> OPEN
-                        </div>
-                        <div class="numbers open-numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                        </div>
-                    </div>
-                    <div class="jodi-section">
-                        <div class="section-title">
-                            <i class="fas fa-link"></i> JODI
-                        </div>
-                        <div class="numbers jodi-numbers">
-                            <div class="number">42</div>
-                            <div class="number">41</div>
-                            <div class="number">43</div>
-                            <div class="number">45</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- MILAN DAY Card -->
-            <div class="market-card">
-                <h2 class="market-name">MILAN DAY</h2>
-                <div class="market-details">
-                    <div class="open-section">
-                        <div class="section-title">
-                            <i class="fas fa-lock-open"></i> OPEN
-                        </div>
-                        <div class="numbers open-numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                        </div>
-                    </div>
-                    <div class="jodi-section">
-                        <div class="section-title">
-                            <i class="fas fa-link"></i> JODI
-                        </div>
-                        <div class="numbers jodi-numbers">
-                            <div class="number">21</div>
-                            <div class="number">25</div>
-                            <div class="number">26</div>
-                            <div class="number">24</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- KALYAN Card -->
-            <div class="market-card">
-                <h2 class="market-name">KALYAN</h2>
-                <div class="market-details">
-                    <div class="open-section">
-                        <div class="section-title">
-                            <i class="fas fa-lock-open"></i> OPEN
-                        </div>
-                        <div class="numbers open-numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                        </div>
-                    </div>
-                    <div class="jodi-section">
-                        <div class="section-title">
-                            <i class="fas fa-link"></i> JODI
-                        </div>
-                        <div class="numbers jodi-numbers">
-                            <div class="number">21</div>
-                            <div class="number">22</div>
-                            <div class="number">23</div>
-                            <div class="number">24</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- SRIDEVI NIGHT Card -->
-            <div class="market-card">
-                <h2 class="market-name">SRIDEVI NIGHT</h2>
-                <div class="market-details">
-                    <div class="open-section">
-                        <div class="section-title">
-                            <i class="fas fa-lock-open"></i> OPEN
-                        </div>
-                        <div class="numbers open-numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                        </div>
-                    </div>
-                    <div class="jodi-section">
-                        <div class="section-title">
-                            <i class="fas fa-link"></i> JODI
-                        </div>
-                        <div class="numbers jodi-numbers">
-                            <div class="number">12</div>
-                            <div class="number">13</div>
-                            <div class="number">14</div>
-                            <div class="number">15</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- MILAN NIGHT Card -->
-            <div class="market-card">
-                <h2 class="market-name">MILAN NIGHT</h2>
-                <div class="market-details">
-                    <div class="open-section">
-                        <div class="section-title">
-                            <i class="fas fa-lock-open"></i> OPEN
-                        </div>
-                        <div class="numbers open-numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                        </div>
-                    </div>
-                    <div class="jodi-section">
-                        <div class="section-title">
-                            <i class="fas fa-link"></i> JODI
-                        </div>
-                        <div class="numbers jodi-numbers">
-                            <div class="number">12</div>
-                            <div class="number">13</div>
-                            <div class="number">14</div>
-                            <div class="number">15</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- MAIN BAZAR Card -->
-            <div class="market-card">
-                <h2 class="market-name">MAIN BAZAR</h2>
-                <div class="market-details">
-                    <div class="open-section">
-                        <div class="section-title">
-                            <i class="fas fa-lock-open"></i> OPEN
-                        </div>
-                        <div class="numbers open-numbers">
-                            <div class="number">1</div>
-                            <div class="number">2</div>
-                            <div class="number">3</div>
-                            <div class="number">4</div>
-                        </div>
-                    </div>
-                    <div class="jodi-section">
-                        <div class="section-title">
-                            <i class="fas fa-link"></i> JODI
-                        </div>
-                        <div class="numbers jodi-numbers">
-                            <div class="number">12</div>
-                            <div class="number">13</div>
-                            <div class="number">14</div>
-                            <div class="number">15</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Admin Controls (Hidden by default) -->
+        <div class="admin-controls" id="adminControls">
+            <h3 class="admin-title"><i class="fas fa-user-shield"></i> ADMIN CONTROLS</h3>
+            <p class="admin-instructions">
+                <strong>Instructions:</strong> To update daily numbers, modify the values in the JavaScript section (Part 3). 
+                Change the 'open' and 'jodi' arrays for each market, then click "UPDATE NUMBERS".
+            </p>
+            <button class="update-btn" id="updateNumbers">
+                <i class="fas fa-sync-alt"></i> UPDATE NUMBERS FROM CODE
+            </button>
+        </div>
+        
+        <div class="markets-container" id="marketsContainer">
+            <!-- Market cards will be generated by JavaScript -->
         </div>
         
         <button class="refresh-btn" id="refreshBtn">
-            <i class="fas fa-sync-alt"></i> REFRESH
+            <i class="fas fa-sync-alt"></i> REFRESH DISPLAY
         </button>
         
         <footer class="footer">
-            <p>SHREEMATKABOSS &copy; 2026 | This is a recreation for demonstration purposes only</p>
-            <p>Note: This is a static recreation of the design shown in the image.</p>
+            <p>SHREEMATKABOSS &copy; 2026 | Admin-Controlled Daily Numbers</p>
+            <p>Only you can change numbers by editing the JavaScript variables</p>
         </footer>
     </div>
+    
+    <!-- Admin Toggle Button -->
+    <div class="admin-toggle" id="adminToggle">
+        <i class="fas fa-cog"></i>
+    </div>
+    <!-- CONTINUATION FROM PART 1 -->
+<!-- COPY THIS AFTER PART 1 -->
 
     <script>
-        // Refresh button functionality
-        document.getElementById('refreshBtn').addEventListener('click', function() {
+        // ==============================================
+        // DAILY NUMBERS - EDIT THESE VALUES DAILY
+        // ==============================================
+        
+        // Today's date
+        const currentDate = "16/01/2026";
+        
+        // Daily numbers for each market - UPDATE THESE DAILY
+        const dailyNumbers = {
+            sridevi: {
+                open: [1, 2, 3, 4],
+                jodi: [42, 41, 43, 45]
+            },
+            milanDay: {
+                open: [1, 2, 3, 4],
+                jodi: [21, 25, 26, 24]
+            },
+            kalyan: {
+                open: [1, 2, 3, 4],
+                jodi: [21, 22, 23, 24]
+            },
+            srideviNight: {
+                open: [1, 2, 3, 4],
+                jodi: [12, 13, 14, 15]
+            },
+            milanNight: {
+                open: [1, 2, 3, 4],
+                jodi: [12, 13, 14, 15]
+            },
+            mainBazar: {
+                open: [1, 2, 3, 4],
+                jodi: [12, 13, 14, 15]
+            }
+        };
+        
+        // Market names in display order
+        const marketNames = [
+            { id: "sridevi", name: "SRIDEVI" },
+            { id: "milanDay", name: "MILAN DAY" },
+            { id: "kalyan", name: "KALYAN" },
+            { id: "srideviNight", name: "SRIDEVI NIGHT" },
+            { id: "milanNight", name: "MILAN NIGHT" },
+            { id: "mainBazar", name: "MAIN BAZAR" }
+        ];
+        
+        // ==============================================
+        // END OF DAILY EDITS
+        // ==============================================
+        
+        // DOM Elements
+        const marketsContainer = document.getElementById('marketsContainer');
+        const currentDateElement = document.getElementById('currentDate');
+        const datePicker = document.getElementById('datePicker');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const adminToggle = document.getElementById('adminToggle');
+        const adminControls = document.getElementById('adminControls');
+        const updateNumbersBtn = document.getElementById('updateNumbers');
+        
+        // Set initial date
+        currentDateElement.textContent = `DATE - ${currentDate}`;
+        
+        // Set date picker to today
+        const today = new Date();
+        const formattedToday = today.toISOString().split('T')[0];
+        datePicker.value = formattedToday;
+        
+        // Function to generate market cards
+        function generateMarketCards() {
+            marketsContainer.innerHTML = '';
+            
+            marketNames.forEach(market => {
+                const marketData = dailyNumbers[market.id];
+                
+                const card = document.createElement('div');
+                card.className = 'market-card';
+                card.innerHTML = `
+                    <h2 class="market-name">${market.name}</h2>
+                    <div class="market-details">
+                        <div class="open-section">
+                            <div class="section-title">
+                                <i class="fas fa-lock-open"></i> OPEN
+                            </div>
+                            <div class="numbers open-numbers">
+                                ${marketData.open.map(num => `<div class="number">${num}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="jodi-section">
+                            <div class="section-title">
+                                <i class="fas fa-link"></i> JODI
+                            </div>
+                            <div class="numbers jodi-numbers">
+                                ${marketData.jodi.map(num => `<div class="number">${num}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                marketsContainer.appendChild(card);
+            });
+        }
+        
+        // Function to animate numbers
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.number');
+            
+            numbers.forEach((number, index) => {
+                setTimeout(() => {
+                    number.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        number.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 30);
+            });
+        }
+        
+        // Initialize the page
+        generateMarketCards();
+        animateNumbers();
+        
+        // Event Listeners
+        refreshBtn.addEventListener('click', function() {
             const btn = this;
             const originalText = btn.innerHTML;
             
@@ -420,29 +476,66 @@
             
             // Simulate refresh delay
             setTimeout(() => {
-                // Restore button state
+                // Regenerate cards
+                generateMarketCards();
+                animateNumbers();
+                
+                // Restore button
                 btn.innerHTML = originalText;
                 btn.disabled = false;
                 
-                // Show alert (in a real implementation, this would refresh the data)
-                alert('Page refreshed! In a real implementation, this would fetch new matka results.');
-            }, 1500);
+                // Show confirmation
+                console.log('Numbers refreshed from current data');
+            }, 800);
         });
         
-        // Add subtle animation to numbers on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const numbers = document.querySelectorAll('.number');
+        // Date picker change
+        datePicker.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const formattedDate = `${selectedDate.getDate().toString().padStart(2, '0')}/${(selectedDate.getMonth()+1).toString().padStart(2, '0')}/${selectedDate.getFullYear()}`;
+            currentDateElement.textContent = `DATE - ${formattedDate}`;
+        });
+        <!-- CONTINUATION FROM PART 2 -->
+<!-- COPY THIS AFTER PART 2 -->
+
+        // Admin toggle
+        adminToggle.addEventListener('click', function() {
+            adminControls.classList.toggle('active');
+            this.innerHTML = adminControls.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-cog"></i>';
+        });
+        
+        // Update numbers from code
+        updateNumbersBtn.addEventListener('click', function() {
+            // Regenerate cards with current data
+            generateMarketCards();
+            animateNumbers();
             
-            numbers.forEach((number, index) => {
-                // Stagger the animation
-                setTimeout(() => {
-                    number.style.transform = 'scale(1.1)';
-                    setTimeout(() => {
-                        number.style.transform = 'scale(1)';
-                    }, 300);
-                }, index * 50);
-            });
+            // Show confirmation
+            alert('Numbers updated from JavaScript variables!');
+            console.log('Daily numbers updated:', dailyNumbers);
+        });
+        
+        // Instructions for admin
+        console.log(`============================================`);
+        console.log(`SHREEMATKABOSS - ADMIN INSTRUCTIONS`);
+        console.log(`============================================`);
+        console.log(`To update daily numbers:`);
+        console.log(`1. Find the "DAILY NUMBERS" section in the code`);
+        console.log(`2. Update the 'currentDate' variable with today's date`);
+        console.log(`3. Update the 'open' and 'jodi' arrays for each market`);
+        console.log(`4. Save the file and refresh the page`);
+        console.log(`5. Or use the ADMIN CONTROLS panel (click the gear icon)`);
+        console.log(`============================================`);
+        
+        // Display current numbers in console for easy reference
+        console.log('Current numbers loaded:');
+        marketNames.forEach(market => {
+            console.log(`${market.name}:`);
+            console.log(`  Open: ${dailyNumbers[market.id].open.join(', ')}`);
+            console.log(`  Jodi: ${dailyNumbers[market.id].jodi.join(', ')}`);
         });
     </script>
 </body>
-                                                    </html>
+</html>
