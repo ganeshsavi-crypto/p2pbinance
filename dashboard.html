@@ -1,86 +1,748 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Dashboard</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rudraksh – Premium Dashboard</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
+        body {
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, #1a1e2a, #0a0c12);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+        /* HEADER – EXACT MATCH */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 25px;
+            border-bottom: 4px solid #00e6c3;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .logo-img {
+            width: 56px;
+            height: 56px;
+            background: #00e6c3;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            font-weight: 900;
+            color: #0a0c12;
+            box-shadow: 0 0 20px rgba(0,230,195,0.7);
+        }
+        .logo-text {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #00e6c3;
+            text-shadow: 0 0 12px rgba(0,230,195,0.5);
+        }
+        .datetime {
+            text-align: right;
+            background: rgba(0,230,195,0.08);
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: 1.5px solid #00e6c3;
+        }
+        #currentTime {
+            font-size: 28px;
+            font-weight: 700;
+            color: #00ffe6;
+            line-height: 1.2;
+        }
+        #currentDate {
+            font-size: 15px;
+            color: #b2fff0;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 18px;
+        }
+        .back-btn, .logout-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: transparent;
+            border: 2px solid;
+        }
+        .back-btn {
+            color: #00e6c3;
+            border-color: #00e6c3;
+        }
+        .logout-btn {
+            color: #ff7b7b;
+            border-color: #ff7b7b;
+        }
+        .back-btn:hover { background: #00e6c3; color: #0a0c12; }
+        .logout-btn:hover { background: #ff7b7b; color: #0a0c12; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo-img">🎯</div>
+                <div class="logo-text">RUDRAKSH</div>
+            </div>
+            <div class="datetime">
+                <div id="currentTime">10:01:00</div>
+                <div id="currentDate">Thursday, 11 Feb 2026</div>
+            </div>
+            <div class="action-buttons">
+                <button class="back-btn" onclick="history.back()">← BACK</button>
+                <button id="logoutBtn" class="logout-btn">LOGOUT</button>
+            </div>
+        </div>
+        <!-- NOTICE BOARD (DISPLAY ONLY, EDIT IN JAVASCRIPT) -->
+<div class="notice-board">
+    <h2>📢 NOTICE BOARD</h2>
+    <div id="noticeBoardDisplay" class="notice-content"></div>
+</div>
 
-<h3>Customer Profile</h3>
-<p>Email: <span id="mail"></span></p>
-<p>Points: <span id="pts"></span></p>
+<style>
+    .notice-board {
+        background: linear-gradient(145deg, #141a24, #0d121c);
+        border: 2px solid #00e6c3;
+        border-radius: 28px;
+        padding: 28px;
+        margin: 35px 0;
+        box-shadow: 0 15px 35px rgba(0,230,195,0.2);
+    }
+    .notice-board h2 {
+        color: #00e6c3;
+        font-size: 30px;
+        letter-spacing: 4px;
+        margin-bottom: 20px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 800;
+    }
+    .notice-content {
+        background: #0f141c;
+        border-radius: 20px;
+        padding: 28px;
+        min-height: 200px;
+        color: #f0ffff;
+        font-size: 17px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        font-family: 'Courier New', monospace;
+        border: 1px solid #00e6c3;
+        box-shadow: inset 0 0 25px rgba(0,0,0,0.7);
+        letter-spacing: 0.8px;
+    }
+</style>
+<!-- PREMIUM MARKETS TITLE -->
+<div class="section-title">
+    <h2>🎲 PREMIUM MARKETS</h2>
+</div>
+<!-- 7 MARKET CARDS CONTAINER -->
+<div id="marketsGrid" class="markets-grid"></div>
 
-<hr>
+<!-- ========== PREMIUM GAME CONTACT – EXACT REPLICA OF 17328.PNG ========== -->
+<div class="premium-contact-card">
+    <div class="contact-header">
+        <h3>📞 PREMIUM GAME CONTACT</h3>
+        <span class="tagline">Get Expert Tips & High Accuracy Results</span>
+    </div>
+    
+    <div class="passing-ratio">
+        <span class="ratio-badge">PASSING RATIO: 95%</span>
+    </div>
 
-<input id="to" placeholder="Send to (email)"><br><br>
-<input id="amt" type="number" placeholder="Points"><br><br>
-<button onclick="send()">Send Points</button>
+    <div class="contact-details">
+        <div class="contact-item call">
+            <div class="contact-title">📞 CALL FOR PREMIUM GAMES</div>
+            <div class="contact-number">9328435505</div>
+            <div class="contact-timing">Support 10:00 AM TO 6:00 PM</div>
+        </div>
+        <div class="contact-item whatsapp">
+            <div class="contact-title">💬 WHATSAPP FOR TIPS</div>
+            <div class="contact-number">9328435505</div>
+            <div class="contact-timing">Instant Replies | Live Results</div>
+        </div>
+    </div>
 
-<hr>
-<h4>History</h4>
-<ul id="list"></ul>
+    <div class="premium-benefits">
+        <h4>PREMIUM BENEFITS</h4>
+        <ul>
+            <li>✅ 95% Passing Accuracy Guarantee</li>
+            <li>✅ Expert Analysis & Daily Tips</li>
+            <li>✅ Support: 10:00 AM TO 6:00 PM</li>
+            <li>✅ Instant Results & Updates</li>
+        </ul>
+    </div>
 
-<script>
-const firebaseConfig = {
-  // SAME FIREBASE CONFIG
-};
+    <div class="trust-badge">
+        ★ TRUSTED BY THOUSANDS OF PLAYERS
+    </div>
+</div>
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-let user;
+<!-- BOTTOM ACTION BUTTONS (← BACK & LOGOUT) – as in image -->
+<div class="bottom-actions">
+    <button class="back-btn-bottom" onclick="history.back()">← BACK</button>
+    <button id="logoutBtnBottom" class="logout-btn-bottom">LOGOUT</button>
+</div>
 
-auth.onAuthStateChanged(u=>{
-  if(!u) location.href="index.html";
-  user=u;
-  mail.innerText=u.email;
-  loadUser();
-  loadHistory();
-});
+<style>
+    /* Section title */
+    .section-title h2 {
+        color: #00e6c3;
+        font-size: 28px;
+        margin: 25px 0 15px;
+        border-left: 10px solid #00e6c3;
+        padding-left: 20px;
+        letter-spacing: 3px;
+        font-weight: 800;
+    }
+    /* Markets grid */
+    .markets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 28px;
+        margin: 25px 0 45px;
+    }
+    .market-card {
+        background: #0f151f;
+        border: 2px solid #2e4a5a;
+        border-radius: 24px;
+        padding: 28px 18px;
+        text-align: center;
+        transition: 0.25s;
+        box-shadow: 0 10px 0 #080c12;
+    }
+    .market-card:hover {
+        border-color: #00e6c3;
+        transform: translateY(-8px);
+        box-shadow: 0 18px 30px rgba(0,230,195,0.25);
+    }
+    .market-name {
+        font-size: 26px;
+        font-weight: 800;
+        color: #00ffe6;
+        margin-bottom: 12px;
+        text-shadow: 0 0 10px rgba(0,255,230,0.5);
+    }
+    .market-time {
+        background: #1e2e3c;
+        color: #d0f0ff;
+        padding: 8px 20px;
+        border-radius: 60px;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 25px;
+        border: 1px solid #00e6c3;
+    }
+    .view-btn {
+        background: linear-gradient(145deg, #00e6c3, #00b39b);
+        color: white;
+        border: none;
+        padding: 16px 10px;
+        width: 100%;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: 2.5px;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 6px 0 #007a68;
+    }
+    .view-btn:hover {
+        background: #00ffe6;
+        color: #0a0c12;
+        box-shadow: 0 6px 0 #009f8a;
+    }
 
-function loadUser(){
-  db.collection("users").doc(user.uid).get()
-  .then(d=>pts.innerText=d.data().points);
-}
+    /* ========== PREMIUM GAME CONTACT CARD ========== */
+    .premium-contact-card {
+        background: #0f151f;
+        border: 2px solid #00e6c3;
+        border-radius: 32px;
+        padding: 32px;
+        margin: 40px 0 30px;
+        box-shadow: 0 20px 40px rgba(0,230,195,0.25);
+    }
+    .contact-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        border-bottom: 2px dashed #00e6c3;
+        padding-bottom: 20px;
+    }
+    .contact-header h3 {
+        color: #00e6c3;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+    .tagline {
+        color: #ffdb7e;
+        font-size: 20px;
+        font-style: italic;
+        background: rgba(255,219,126,0.1);
+        padding: 8px 24px;
+        border-radius: 50px;
+        border: 1px solid #ffdb7e;
+    }
+    .passing-ratio {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .ratio-badge {
+        background: #00e6c3;
+        color: #0a0c12;
+        font-size: 26px;
+        font-weight: 900;
+        padding: 12px 40px;
+        border-radius: 60px;
+        display: inline-block;
+        box-shadow: 0 0 20px rgba(0,230,195,0.5);
+        letter-spacing: 2px;
+    }
+    .contact-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 35px;
+    }
+    .contact-item {
+        background: #0a0e14;
+        border: 1px solid #00e6c3;
+        border-radius: 24px;
+        padding: 24px;
+        text-align: center;
+    }
+    .contact-title {
+        color: #ffdb7e;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+    .contact-number {
+        color: #00ffe6;
+        font-size: 32px;
+        font-weight: 900;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        text-shadow: 0 0 10px rgba(0,255,230,0.5);
+    }
+    .contact-timing {
+        color: #b2fff0;
+        font-size: 16px;
+    }
+    .premium-benefits {
+        background: #0a0e14;
+        border-radius: 24px;
+        padding: 24px 32px;
+        margin-bottom: 25px;
+        border: 1px solid #00e6c3;
+    }
+    .premium-benefits h4 {
+        color: #00e6c3;
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .premium-benefits ul {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .premium-benefits li {
+        color: #e6faff;
+        font-size: 18px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .premium-benefits li::before {
+        content: "✅";
+        color: #00e6c3;
+        font-size: 20px;
+    }
+    .trust-badge {
+        text-align: center;
+        color: #ffdb7e;
+        font-size: 22px;
+        font-weight: 700;
+        padding: 15px;
+        border-top: 2px solid #00e6c3;
+        letter-spacing: 2px;
+    }
+    /* Bottom action buttons */
+    .bottom-actions {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin: 20px 0 40px;
+    }
+    .back-btn-bottom, .logout-btn-bottom {
+        padding: 14px 40px;
+        border: none;
+        border-radius: 60px;
+        font-weight: 800;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.2s;
+        background: transparent;
+        border: 2px solid;
+    }
+    .back-btn-bottom {
+        color: #00e6c3;
+        border-color: #00e6c3;
+    }
+    .logout-btn-bottom {
+        color: #ff7b7b;
+        border-color: #ff7b7b;
+    }
+    .back-btn-bottom:hover { background: #00e6c3; color: #0a0c12; }
+    .logout-btn-bottom:hover { background: #ff7b7b; color: #0a0c12; }
 
-function send(){
-  const email=to.value;
-  const value=Number(amt.value);
+    @media (max-width: 768px) {
+        .contact-details { grid-template-columns: 1fr; }
+        .premium-benefits ul { grid-template-columns: 1fr; }
+        .contact-header { flex-direction: column; align-items: center; gap: 12px; }
+    }
+</style>
+    <!-- RESULTS MODAL (O.T.C, SUPPORT, JODI, PANEL, CLOSE) -->
+    <div id="resultsModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalBarName">KALYAN</h2>
+            <div class="result-section">
+                <div class="result-row">
+                    <span class="result-label">O.T.C</span>
+                    <span id="result1" class="result-value">2, 7, 5, 0</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">SUPPORT</span>
+                    <span id="result2" class="result-value">8, 3</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">JODI</span>
+                    <span id="result3" class="result-value">74, 79, 24, 29, 54, 59, 04, 09</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">PANEL</span>
+                    <span id="result4" class="result-value">147, 269, 578, 250</span>
+                </div>
+                <div class="result-row close-row">
+                    <span class="result-label">CLOSE</span>
+                    <span id="result5" class="result-value">****</span>
+                </div>
+            </div>
+            <button id="closeModalBtn" class="close-btn">✕ CLOSE</button>
+        </div>
+    </div>
+</div> <!-- End container -->
 
-  db.collection("users").where("email","==",email).get()
-  .then(s=>{
-    if(s.empty) return alert("User not found");
-    const r=s.docs[0];
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9);
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        backdrop-filter: blur(8px);
+    }
+    .modal-content {
+        background: #0f151f;
+        border: 5px solid #00e6c3;
+        border-radius: 40px;
+        padding: 35px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 30px 50px rgba(0,230,195,0.4);
+        animation: modalPop 0.3s;
+    }
+    @keyframes modalPop {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    .modal-content h2 {
+        color: #00ffe6;
+        font-size: 36px;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 0 0 20px #00e6c3;
+        border-bottom: 3px solid #00e6c3;
+        padding-bottom: 15px;
+    }
+    .result-section {
+        background: #0a0e14;
+        border-radius: 24px;
+        padding: 10px 20px;
+        border: 1px solid #00e6c3;
+    }
+    .result-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 16px 10px;
+        border-bottom: 1px solid #2e4a5a;
+    }
+    .close-row {
+        border-bottom: none;
+    }
+    .result-label {
+        color: #ffdb7e;
+        font-weight: 800;
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+    .result-value {
+        color: white;
+        font-size: 22px;
+        font-weight: 700;
+        background: rgba(0,230,195,0.15);
+        padding: 6px 18px;
+        border-radius: 50px;
+        border: 1px solid #00e6c3;
+    }
+    .close-btn {
+        background: #ff6b6b;
+        color: #0a0c12;
+        border: none;
+        padding: 16px;
+        width: 100%;
+        border-radius: 60px;
+        margin-top: 28px;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 4px;
+        cursor: pointer;
+        transition: 0.2s;
+        border: 2px solid #ff8a8a;
+    }
+    .close-btn:hover {
+        background: #ff4d4d;
+        color: white;
+        border-color: white;
+    }
+      </style>
+          <script>
+        // ============================================
+        // 🔧 FIREBASE CONFIG – YOUR EXACT CREDENTIALS
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVxq4EZHm4D2zMrz_ndLzcqx3wKhdPdVc",
+            authDomain: "rudraksh-d74c3.firebaseapp.com",
+            projectId: "rudraksh-d74c3",
+            storageBucket: "rudraksh-d74c3.firebasestorage.app",
+            messagingSenderId: "270620722307",
+            appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+            measurementId: "G-406NQEK3XV"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
-    db.collection("users").doc(user.uid)
-    .update({points:firebase.firestore.FieldValue.increment(-value)});
-    db.collection("users").doc(r.id)
-    .update({points:firebase.firestore.FieldValue.increment(value)});
+        // ============================================
+        // ✏️ EDIT NOTICE BOARD HERE – ONLY YOU CHANGE THIS
+        // ============================================
+        const noticeBoardText = `GOLDEN ANK FOR ALL  
+MARKET TODAY (1, 6, 5, 0, 4, 9)`;
 
-    db.collection("transactions").add({
-      from:user.email,to:email,amount:value,time:new Date()
+        // ============================================
+        // 📊 PREMIUM MARKETS – 7 MARKETS (EDIT NAMES / TIMES)
+        // ============================================
+        const barsData = [
+            { id: 1, text: "KALYAN", time: "2.00 PM" },
+            { id: 2, text: "SRIDEVI", time: "10.30 AM" },
+            { id: 3, text: "TIME BAZAR", time: "12.00 PM" },
+            { id: 4, text: "MILAN DAY", time: "1.30 PM" },
+            { id: 5, text: "SRIDEVI NIGHT", time: "6.00 PM" },
+            { id: 6, text: "MILAN NIGHT", time: "8.00 PM" },
+            { id: 7, text: "MAIN BAZAR", time: "8.30 PM" }
+        ];
+
+        // ============================================
+        // 📈 MARKET RESULTS – EXACT AS IMAGE (17316.png)
+        // ============================================
+        const barResults = {
+            1: { // KALYAN
+                h1: "O.T.C", t1: "2, 7, 5, 0",
+                h2: "SUPPORT", t2: "8, 3",
+                h3: "JODI", t3: "74, 79, 24, 29, 54, 59, 04, 09",
+                h4: "PANEL", t4: "147, 269, 578, 250",
+                h5: "CLOSE", t5: "****"
+            },
+            2: { // SRIDEVI
+                h1: "O.T.C", t1: "8' 1' 6' 3",
+                h2: "SUPPORT", t2: "****",
+                h3: "JODI", t3: "81 86 60 65 32 37",
+                h4: "PANEL", t4: "229, 448, 170, 157, 150, 350",
+                h5: "CLOSE", t5: "****"
+            },
+            3: { // TIME BAZAR
+                h1: "O.T.C", t1: "****",
+                h2: "SUPPORT", t2: "****",
+                h3: "JODI", t3: "****",
+                h4: "PANEL", t4: "****",
+                h5: "CLOSE", t5: "****"
+            },
+            4: { // MILAN DAY
+                h1: "O.T.C", t1: "****",
+                h2: "SUPPORT", t2: "****",
+                h3: "JODI", t3: "****",
+                h4: "PANEL", t4: "****",
+                h5: "CLOSE", t5: "****"
+            },
+            5: { // SRIDEVI NIGHT
+                h1: "O.T.C", t1: "****",
+                h2: "SUPPORT", t2: "****",
+                h3: "JODI", t3: "****",
+                h4: "PANEL", t4: "****",
+                h5: "CLOSE", t5: "****"
+            },
+            6: { // MILAN NIGHT
+                h1: "O.T.C", t1: "****",
+                h2: "SUPPORT", t2: "****",
+                h3: "JODI", t3: "****",
+                h4: "PANEL", t4: "****",
+                h5: "CLOSE", t5: "****"
+            },
+            7: { // MAIN BAZAR
+                h1: "O.T.C", t1: "****",
+                h2: "SUPPORT", t2: "****",
+                h3: "JODI", t3: "****",
+                h4: "PANEL", t4: "****",
+                h5: "CLOSE", t5: "****"
+            }
+        };
+            // ============================================
+// 🚀 LOAD 7 MARKET CARDS
+// ============================================
+function loadBars() {
+    const grid = document.getElementById('marketsGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    barsData.forEach(bar => {
+        const card = document.createElement('div');
+        card.className = 'market-card';
+        card.innerHTML = `
+            <div class="market-name">${bar.text}</div>
+            <div class="market-time">${bar.time}</div>
+            <button class="view-btn" onclick="showResults(${bar.id})">VIEW RESULTS</button>
+        `;
+        grid.appendChild(card);
     });
-
-    loadUser();
-    loadHistory();
-  });
 }
 
-function loadHistory(){
-  list.innerHTML="";
-  db.collection("transactions")
-  .where("from","==",user.email)
-  .get().then(s=>{
-    s.forEach(d=>{
-      let li=document.createElement("li");
-      li.innerText=`Sent ${d.data().amount} to ${d.data().to}`;
-      list.appendChild(li);
-    });
-  });
-}
-</script>
+// ============================================
+// 🔍 SHOW RESULTS MODAL (5 ROWS)
+// ============================================
+function showResults(id) {
+    const market = barsData.find(b => b.id === id);
+    const res = barResults[id];
+    if (!market || !res) return;
 
+    document.getElementById('modalBarName').innerText = market.text;
+    document.getElementById('result1').innerText = res.t1 || '****';
+    document.getElementById('result2').innerText = res.t2 || '****';
+    document.getElementById('result3').innerText = res.t3 || '****';
+    document.getElementById('result4').innerText = res.t4 || '****';
+    document.getElementById('result5').innerText = res.t5 || '****';
+
+    document.getElementById('resultsModal').style.display = 'flex';
+}
+
+// ============================================
+// 📅 DISPLAY NOTICE BOARD (FROM EDITABLE VARIABLE)
+// ============================================
+function displayNotice() {
+    const el = document.getElementById('noticeBoardDisplay');
+    if (el) {
+        el.innerHTML = noticeBoardText.replace(/\n/g, '<br>');
+    }
+}
+
+// ============================================
+// ⏰ REAL-TIME CLOCK
+// ============================================
+function updateDateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+    document.getElementById('currentTime').innerText = timeStr;
+    document.getElementById('currentDate').innerText = dateStr;
+      }
+                    // ============================================
+        // 🔐 AUTH STATE – REDIRECT IF NOT LOGGED IN
+        // ============================================
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'index.html'; // your login page
+            } else {
+                loadBars();
+                displayNotice();
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
+            }
+        });
+
+        // ============================================
+        // 🖱️ EVENT LISTENERS
+        // ============================================
+        document.getElementById('logoutBtn').onclick = () => {
+            auth.signOut();
+            window.location.href = 'index.html';
+        };
+
+        // Also handle bottom logout button
+        document.getElementById('logoutBtnBottom').onclick = () => {
+            auth.signOut();
+            window.location.href = 'index.html';
+        };
+
+        // Close modal with button
+        document.getElementById('closeModalBtn').onclick = () => {
+            document.getElementById('resultsModal').style.display = 'none';
+        };
+
+        // Close modal when clicking outside
+        window.onclick = (event) => {
+            const modal = document.getElementById('resultsModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
 </body>
 </html>
